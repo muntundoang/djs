@@ -17,8 +17,6 @@ Description:
 
 - Get all Users from database 
 
-Request:
-
 _Response (200 - OK)_
 
 ```json
@@ -102,6 +100,14 @@ OR
 ## 3. POST /users/login
 
 - Description: user login
+- Seed User (default)
+```json
+{
+    "username":"admin",
+    "password":"ju3SpU",
+    "role":"Admin"
+}
+```
 
 _Response (200 - OK)_
 
