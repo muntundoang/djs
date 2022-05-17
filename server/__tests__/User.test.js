@@ -2,12 +2,12 @@ const request = require('supertest');
 const app = require('../app_test.js');
 
 // Import Sequelize Model
-const { User } = require('../models');
+const { User, sequelize } = require('../models');
 
 // Data Registration
 const dataRegis = {
     username: 'usertest',
-    role: 'test',
+    role: 'User',
 }
 
 // Global variable 
@@ -20,11 +20,8 @@ const invalid_payload = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.fyJkYXRhIjoiYWRtaW
 
 // Delete After running test
 afterAll(async () => {
-    const testUsers = prisma.User.deleteMany()
-
-    await prisma.$transaction([testUsers])
-
-    await prisma.$disconnect()
+    await User.destroy({ truncate: true, cascade: true, restartIdentity: true });
+    await new Promise(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
 })
 
 // Running Test User
@@ -32,7 +29,6 @@ describe('POST users/register', () => {
     // --------------- Register Test ---------------
     describe('> Register Success', () => {
         it('- Should return 201 status code with message', async () => {
-
             const res = await request(app).post('/users/register').send(dataRegis)
             const registeredUser = await User.findOne({
                 where: {
@@ -46,7 +42,6 @@ describe('POST users/register', () => {
             expect(res.body).toHaveProperty("message");
             expect(res.body).toHaveProperty("message", expect.any(String));
             expect(res.body).toHaveProperty("message", expect.stringMatching(`ID ${userid} dengan username ${username} telah dibuat`));
-
         })
     })
 
@@ -108,7 +103,7 @@ describe('POST users/register', () => {
         describe('- Register Fail: Username already exist', () => {
             it(`Should return -> | status code: 400 | name: "registerUsernameExist" | errCode: 11 | message: "Username already exist" |`, async () => {
 
-                const res = await request(app).post('/users/register').send({ username: 'usertest', role: 'test' })
+                const res = await request(app).post('/users/register').send(dataRegis)
                 expect(res.status).toBe(400);
                 expect(res.body).toHaveProperty("name");
                 expect(res.body).toHaveProperty("name", expect.any(String));
@@ -276,17 +271,21 @@ describe('POST users/register', () => {
 
         describe('- Token Expired', () => {
             it(`Should return -> | status code: 401 | name: "TokenExpiredError" | errCode: 10 | message: "Token Expired" |`, async () => {
-                const res = await request(app).post('/users/auth').set({ access_token: expired_token })
-                expect(res.status).toBe(401);
-                expect(res.body).toHaveProperty("name");
-                expect(res.body).toHaveProperty("name", expect.any(String));
-                expect(res.body).toHaveProperty("name", expect.stringMatching(`TokenExpiredError`));
-                expect(res.body).toHaveProperty("errCode");
-                expect(res.body).toHaveProperty("errCode", expect.any(Number));
-                expect(res.body.errCode).toBe(10)
-                expect(res.body).toHaveProperty("message");
-                expect(res.body).toHaveProperty("message", expect.any(String));
-                expect(res.body).toHaveProperty("message", expect.stringMatching(`Current Token is expired. please Relogin`));
+                try {
+                    const res = await request(app).post('/users/auth').set({ access_token: expired_token })
+                    expect(res.status).toBe(401);
+                    expect(res.body).toHaveProperty("name");
+                    expect(res.body).toHaveProperty("name", expect.any(String));
+                    expect(res.body).toHaveProperty("name", expect.stringMatching(`TokenExpiredError`));
+                    expect(res.body).toHaveProperty("errCode");
+                    expect(res.body).toHaveProperty("errCode", expect.any(Number));
+                    expect(res.body.errCode).toBe(10)
+                    expect(res.body).toHaveProperty("message");
+                    expect(res.body).toHaveProperty("message", expect.any(String));
+                    expect(res.body).toHaveProperty("message", expect.stringMatching(`Current Token is expired. please Relogin`));
+                } catch (error) {
+                    console.log(error)
+                }
             })
         })
     })
