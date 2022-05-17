@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrate": "npx sequelize:cli db:migrate",
+    "seed": "npx sequelize:cli db:seed:all",
     "start": "nodemon app.js",
     "test": "npx jest --runInBand"
   },
@@ -24,6 +26,7 @@
     "jest": "^28.1.0",
     "nodemon": "^2.0.16",
     "sequelize": "^6.19.0",
+    "sequelize-cli": "^6.4.1",
     "supertest": "^6.2.3"
   }
 }
