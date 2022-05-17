@@ -75,7 +75,7 @@ module.exports = {
     env: 'test'
 }
 ```
-- Execute create database, migrate and seeding (in Test Environment so the main databse remain unchange) to SQL
+- Execute create database, migrate and seeding (in Test Environment so the main database remain unchange) to SQL
 ```
 npm run create
 npm run migrate
@@ -84,6 +84,12 @@ npm run seed
 - run test commant
 ```
 npm run test
+```
+-To change back to developement environment change .sequelizerc enviroment to developement
+```
+module.exports = {
+    env: 'developement'
+}
 ```
 
 

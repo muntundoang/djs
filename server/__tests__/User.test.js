@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../app_test.js');
 
 // Import Sequelize Model
-const { User, sequelize } = require('../models');
+const { User } = require('../models');
 
 // Data Registration
 const dataRegis = {
@@ -28,7 +28,7 @@ afterAll(async () => {
 describe('POST users/register', () => {
     // --------------- Register Test ---------------
     describe('> Register Success', () => {
-        it('- Should return 201 status code with message', async () => {
+        test('- Should return 201 status code with message', async () => {
             const res = await request(app).post('/users/register').send(dataRegis)
             const registeredUser = await User.findOne({
                 where: {

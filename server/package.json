@@ -11,7 +11,7 @@
     "migrate": "npx sequelize-cli db:migrate",
     "seed": "npx sequelize-cli db:seed:all",
     "start": "nodemon app.js",
-    "test": "npx jest --runInBand"
+    "test": "npx jest --forceExit --runInBand"
   },
   "keywords": [],
   "author": "",
