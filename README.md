@@ -75,6 +75,12 @@ module.exports = {
     env: 'test'
 }
 ```
+- Execute create database, migrate and seeding (in Test Environment so the main databse remain unchange) to SQL
+```
+npm run create
+npm run migrate
+npm run seed
+```
 - run test commant
 ```
 npm run test
