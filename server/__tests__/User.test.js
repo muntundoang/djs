@@ -82,6 +82,24 @@ describe('POST users/register', () => {
             })
         })
 
+        describe('- Register Fail: Role Not between Admin or User', () => {
+            it(`Should return -> | status code: 400 | name: "SequelizeValidationError" | errCode: 11 | message: "Validation error: Role must be Admin or User" |`, async () => {
+
+                const res = await request(app).post('/users/register').send({ username: 'test', role: 'Usersss' })
+                expect(res.status).toBe(400);
+                expect(res.body).toHaveProperty("name");
+                expect(res.body).toHaveProperty("name", expect.any(String));
+                expect(res.body).toHaveProperty("name", expect.stringMatching(`SequelizeValidationError`));
+                expect(res.body).toHaveProperty("errCode");
+                expect(res.body).toHaveProperty("errCode", expect.any(Number));
+                expect(res.body.errCode).toBe(11)
+                expect(res.body).toHaveProperty("message");
+                expect(res.body).toHaveProperty("message", expect.any(String));
+                expect(res.body).toHaveProperty("message", expect.stringMatching(`Validation error: Role must be Admin or User`));
+
+            })
+        })
+
         describe('- Register Fail: Username Length < 4', () => {
             it(`Should return -> | status code: 400 | name: "registerUsernameLength" | errCode: 10 | message: "Username length must be at least 4 characters" |`, async () => {
 
